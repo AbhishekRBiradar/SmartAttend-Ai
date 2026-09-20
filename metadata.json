@@ -1,0 +1,10 @@
+{
+  "name": "SmartAttend AI",
+  "description": "A deep learning-driven facial recognition system designed for seamless, real-time automated authentication.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

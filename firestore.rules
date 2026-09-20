@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- Helper Functions ---
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) 
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role 
+        : 'none';
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'admin@smartattend.ai' ||
+        request.auth.token.email == "smartattendai@gmail.com" ||
+        request.auth.token.email == "kumarsrk32@gmail.com" ||
+        request.auth.token.email == "abhishekrbiradar908a@gmail.com" ||
+        request.auth.token.email == "birabiradar1@gmail.com" ||
+        getUserRole() == 'admin' || getUserRole() == 'ADMIN' ||
+        getUserRole() == 'SUPER_ADMIN' ||
+        getUserRole() == 'DEPARTMENT_ADMIN'
+      );
+    }
+    
+    function isTeacher() {
+      return isAuthenticated() && (
+        request.auth.token.email.matches(".*teacher.*") ||
+        getUserRole() == 'teacher' ||
+        getUserRole() == 'TEACHER'
+      );
+    }
+    
+    // --- Base Rules ---
+    match /test/connection {
+      allow read, write: if true;
+    }
+    
+    match /system/settings {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || isTeacher();
+    }
+    
+    // --- Academic Hierarchy ---
+    match /departments/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    match /programs/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    match /academicYears/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    match /batches/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    match /semesters/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    match /sections/{id} { allow read: if isAuthenticated(); allow write: if isAdmin(); }
+    
+    // --- Academic Operations ---
+    match /courseOfferings/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /enrollments/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /timetables/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /classSessions/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /exams/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /results/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /notifications/{id} { allow read: if isAuthenticated(); allow write: if isAuthenticated(); }
+    match /attendance/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+    match /studentProfiles/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher() || (isAuthenticated() && id == request.auth.uid); }
+    match /unknownPersons/{id} { allow read, write: if isAuthenticated(); }
+    match /academicResults/{id} { allow read: if isAuthenticated(); allow write: if isAdmin() || isTeacher(); }
+
+    // --- Users & Roles ---
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+    
+    match /teachers/{teacherId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin() || (isAuthenticated() && teacherId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    
+    match /students/{studentId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin() || isTeacher() || (isAuthenticated() && studentId == request.auth.uid);
+      allow delete: if isAdmin() || isTeacher();
+      
+      match /dataset/{imageId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if isAdmin() || isTeacher() || (isAuthenticated() && studentId == request.auth.uid);
+      }
+    }
+    
+    match /attendanceLogs/{logId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin() || isTeacher();
+    }
+    
+    match /courses/{courseId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin() || isTeacher();
+    }
+    
+    match /deletedRecords/{recordId} {
+      allow read, write: if isAdmin() || isTeacher();
+    }
+    
+    match /auditLogs/{logId} {
+      allow read, write: if isAdmin() || isTeacher();
+    }
+  }
+}

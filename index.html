@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartAttend AI</title>
+    <meta name="description" content="A deep learning-driven facial recognition system designed for seamless, real-time automated authentication." />
+    <meta property="og:title" content="SmartAttend AI" />
+    <meta property="og:description" content="A deep learning-driven facial recognition system designed for seamless, real-time automated authentication." />
+    <script>
+      // Suppress known transient face-api.js WebGL NaN errors from polluting the console
+      const originalConsoleError = console.error;
+      const originalConsoleWarn = console.warn;
+      const originalConsoleLog = console.log;
+
+      const hasBoxError = (args) => {
+        return args.some(arg => {
+          if (!arg) return false;
+          if (typeof arg === 'string' && arg.includes('Box.constructor')) return true;
+          if (arg.message && typeof arg.message === 'string' && arg.message.includes('Box.constructor')) return true;
+          try {
+            const str = String(arg);
+            if (str.includes('Box.constructor')) return true;
+            const json = JSON.stringify(arg);
+            if (json.includes('Box.constructor')) return true;
+          } catch (e) {}
+          return false;
+        });
+      };
+
+      console.error = function(...args) {
+        if (hasBoxError(args)) return;
+        originalConsoleError.apply(console, args);
+      };
+      console.warn = function(...args) {
+        if (hasBoxError(args)) return;
+        originalConsoleWarn.apply(console, args);
+      };
+      console.log = function(...args) {
+        if (hasBoxError(args)) return;
+        originalConsoleLog.apply(console, args);
+      };
+
+      window.addEventListener('unhandledrejection', (event) => {
+        const reasonStr = event.reason && event.reason.message ? event.reason.message : String(event.reason);
+        if (reasonStr.includes('Box.constructor')) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }, { capture: true });
+      window.addEventListener('error', (event) => {
+        const msgStr = event.message || String(event.error);
+        if (msgStr.includes('Box.constructor')) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      }, { capture: true });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
