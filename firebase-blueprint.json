@@ -1,0 +1,557 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "SUPER_ADMIN",
+            "DEPARTMENT_ADMIN",
+            "TEACHER",
+            "STUDENT"
+          ]
+        },
+        "department_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ]
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "email",
+        "role"
+      ]
+    },
+    "StudentProfile": {
+      "title": "StudentProfile",
+      "description": "Student metadata, including enrollment status and facial recognition data.",
+      "type": "object",
+      "properties": {
+        "student_id": {
+          "type": "string"
+        },
+        "department_id": {
+          "type": "string"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "batch_id": {
+          "type": "string"
+        },
+        "usn": {
+          "type": "string"
+        },
+        "face_encodings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "student_id",
+        "department_id",
+        "program_id",
+        "batch_id"
+      ]
+    },
+    "Department": {
+      "title": "Department",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "department_code": {
+          "type": "string"
+        },
+        "department_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "department_code",
+        "department_name"
+      ]
+    },
+    "Course": {
+      "title": "Course",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "course_code": {
+          "type": "string"
+        },
+        "course_name": {
+          "type": "string"
+        },
+        "department_id": {
+          "type": "string"
+        },
+        "credits": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "course_code",
+        "course_name",
+        "department_id"
+      ]
+    },
+    "AttendanceLog": {
+      "title": "AttendanceLog",
+      "description": "Record of a student's attendance.",
+      "type": "object",
+      "properties": {
+        "studentId": {
+          "type": "string"
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "course_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Present",
+            "Late",
+            "Absent"
+          ]
+        }
+      },
+      "required": [
+        "studentId",
+        "date",
+        "status"
+      ]
+    },
+    "DatasetImage": {
+      "title": "DatasetImage",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "url",
+        "createdAt"
+      ]
+    },
+    "Timetable": {
+      "title": "Timetable",
+      "description": "Scheduled recurring lecture/lab slot for a course offering.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "course_offering_id": {
+          "type": "string"
+        },
+        "day_of_week": {
+          "type": "string",
+          "enum": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ]
+        },
+        "start_time": {
+          "type": "string"
+        },
+        "end_time": {
+          "type": "string"
+        },
+        "room": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "ARCHIVED"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "course_offering_id",
+        "day_of_week",
+        "start_time",
+        "end_time",
+        "room",
+        "status"
+      ]
+    },
+    "ClassSession": {
+      "title": "ClassSession",
+      "description": "Live or historical class session initiated by a teacher.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "course_offering_id": {
+          "type": "string"
+        },
+        "teacher_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "start_time": {
+          "type": "string"
+        },
+        "end_time": {
+          "type": "string"
+        },
+        "room": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "SCHEDULED",
+            "ACTIVE",
+            "COMPLETED",
+            "CANCELLED"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "course_offering_id",
+        "teacher_id",
+        "date",
+        "start_time",
+        "status"
+      ]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Attendance event linked to a specific class session.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "course_offering_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PRESENT",
+            "ABSENT",
+            "LATE"
+          ]
+        },
+        "recognition_method": {
+          "type": "string",
+          "enum": [
+            "FACE_RECOGNITION",
+            "MANUAL"
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "student_id",
+        "course_offering_id",
+        "session_id",
+        "date",
+        "status"
+      ]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "Academic exam record (Internal Assessment, Practical, End Sem, Project).",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "exam_name": {
+          "type": "string"
+        },
+        "exam_type": {
+          "type": "string"
+        },
+        "academic_year_id": {
+          "type": "string"
+        },
+        "semester_id": {
+          "type": "string"
+        },
+        "program_id": {
+          "type": "string"
+        },
+        "department_id": {
+          "type": "string"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "ARCHIVED"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "exam_name",
+        "exam_type",
+        "academic_year_id",
+        "semester_id",
+        "program_id",
+        "department_id",
+        "status"
+      ]
+    },
+    "Result": {
+      "title": "Result",
+      "description": "Canonical normalized academic result record.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "student_id": {
+          "type": "string"
+        },
+        "course_offering_id": {
+          "type": "string"
+        },
+        "exam_id": {
+          "type": "string"
+        },
+        "marks": {
+          "type": "number"
+        },
+        "maximum_marks": {
+          "type": "number"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "grade_point": {
+          "type": "number"
+        },
+        "result_status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "PENDING"
+          ]
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "published_by": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "student_id",
+        "course_offering_id",
+        "exam_id",
+        "marks",
+        "maximum_marks",
+        "result_status"
+      ]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Centralized system notifications, announcements, deadlines and alerts.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "notification_id": {
+          "type": "string"
+        },
+        "sender_id": {
+          "type": "string"
+        },
+        "recipient_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "department_id": {
+          "type": "string"
+        },
+        "course_offering_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "read_at": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "UNREAD",
+            "READ"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sender_id",
+        "recipient_id",
+        "type",
+        "title",
+        "message",
+        "created_at",
+        "status"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores user profiles and roles."
+    },
+    "/studentProfiles/{studentId}": {
+      "schema": {
+        "$ref": "#/entities/StudentProfile"
+      },
+      "description": "Stores student data including sensitive face encodings."
+    },
+    "/departments/{departmentId}": {
+      "schema": {
+        "$ref": "#/entities/Department"
+      },
+      "description": "Stores departments."
+    },
+    "/courses/{courseId}": {
+      "schema": {
+        "$ref": "#/entities/Course"
+      },
+      "description": "Stores courses."
+    },
+    "/students/{studentId}/dataset/{imageId}": {
+      "schema": {
+        "$ref": "#/entities/DatasetImage"
+      },
+      "description": "Subcollection of images for a student's facial recognition dataset."
+    },
+    "/attendanceLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/AttendanceLog"
+      },
+      "description": "Stores daily attendance records."
+    },
+    "/timetables/{timetableId}": {
+      "schema": {
+        "$ref": "#/entities/Timetable"
+      },
+      "description": "Stores academic timetable entries."
+    },
+    "/classSessions/{sessionId}": {
+      "schema": {
+        "$ref": "#/entities/ClassSession"
+      },
+      "description": "Stores live and historical class sessions."
+    },
+    "/attendance/{attendanceId}": {
+      "schema": {
+        "$ref": "#/entities/Attendance"
+      },
+      "description": "Stores real-time attendance records for class sessions."
+    },
+    "/exams/{examId}": {
+      "schema": {
+        "$ref": "#/entities/Exam"
+      },
+      "description": "Stores institutional and departmental exams."
+    },
+    "/results/{resultId}": {
+      "schema": {
+        "$ref": "#/entities/Result"
+      },
+      "description": "Stores student exam results and grade points."
+    },
+    "/notifications/{notificationId}": {
+      "schema": {
+        "$ref": "#/entities/Notification"
+      },
+      "description": "Stores user notifications, alerts, deadlines and messages."
+    }
+  }
+}

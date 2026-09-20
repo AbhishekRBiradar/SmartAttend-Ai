@@ -1,0 +1,58 @@
+# =========================
+# Node / React / Vite
+# =========================
+node_modules/
+build/
+dist/
+coverage/
+*.log
+
+# =========================
+# Python
+# =========================
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# =========================
+# Environment variables
+# =========================
+.env*
+!.env.example
+
+# =========================
+# Local databases & student data
+# =========================
+attendance.db
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Credentials & Private Keys
+# =========================
+*.pem
+*.key
+serviceAccountKey.json
+credentials.json
+firebase-applet-config.json
+!firebase-applet-config.example.json
+google-services.json
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
